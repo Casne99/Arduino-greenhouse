@@ -1,8 +1,8 @@
 # Arduino-greenhouse
 Small university project for the "Embedded Systems" course at Università degli Studi di Milano.
 
-
-This is a project that uses an ESP8266 board to directly control various parameters of a homemade small greenhouse using PID control software libraries.
+This is a project that uses an ESP8266 board to directly control various parameters of a homemade small greenhouse using PID control software libraries.  
+Software is written using the [Arduino IDE](https://www.arduino.cc/en/software).
 
 ## Components
 
@@ -14,4 +14,16 @@ Here is a list of all the components I used.
 - [Soil capacitive sensor](https://www.amazon.it/KeeYees-Sensore-Capacitivo-corrodere-Tensione/dp/B07R174TM1/ref=sr_1_2?keywords=capacitive+soil&qid=1641210478&sprefix=Soil+capa%2Caps%2C78&sr=8-2)
 - [Heating plate](https://www.amazon.it/gp/product/B07FJY4PCL/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&th=1)
 - x4 [Transistors](https://www.amazon.it/ICQUANZX-interruttore-Regolazione-Interruttore-elettronico/dp/B07VRCXGFY/ref=sr_1_2?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=mosfet+esp32&qid=1639417941&sr=8-2)
-- 
+
+## Software libraries
+
+Here is a list of the  software libraries I used:
+
+- [TaskScheduler](https://www.arduino.cc/reference/en/libraries/taskscheduler/) by Anatoli Arkhipenko
+- [PID control]()
+
+## How the program works
+
+
+
+
