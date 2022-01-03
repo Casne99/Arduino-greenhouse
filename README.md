@@ -14,7 +14,7 @@ Here is a list of all the components I used:
 - [Soil capacitive sensor](https://www.amazon.it/KeeYees-Sensore-Capacitivo-corrodere-Tensione/dp/B07R174TM1/ref=sr_1_2?keywords=capacitive+soil&qid=1641210478&sprefix=Soil+capa%2Caps%2C78&sr=8-2)
 - [Heating plate](https://www.amazon.it/gp/product/B07FJY4PCL/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&th=1)
 - x4 [Transistors](https://www.amazon.it/ICQUANZX-interruttore-Regolazione-Interruttore-elettronico/dp/B07VRCXGFY/ref=sr_1_2?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=mosfet+esp32&qid=1639417941&sr=8-2)
-- [3V relay]()
+- 3V relay
 
 Also check this [kit](https://www.amazon.it/RUNCCI-YUN-Irrigazione-Automatico-Misurazione-Sommergibile/dp/B0814HXWVV/ref=sr_1_4?keywords=arduino+water+pump&qid=1641211244&sprefix=arduino+wat%2Caps%2C87&sr=8-4) that includes a 5V relay (also works with 3.3V), a DC water pump and a capacitive sensor.
 
