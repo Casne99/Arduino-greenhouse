@@ -1,12 +1,12 @@
 # Arduino-greenhouse
-Small university project for the "Embedded Systems" course at Università degli Studi di Milano.
+Small university project for the "Embedded Systems" course at Università degli Studi di Milano.  
 
 This is a project that uses an ESP8266 board to directly control various parameters of a homemade small greenhouse using PID control software libraries.  
 Software is written using the [Arduino IDE](https://www.arduino.cc/en/software).
 
 ## Components
 
-Here is a list of all the components I used.
+Here is a list of all the components I used:
 
 - [ESP 8266 board](https://www.amazon.it/AZDelivery-NodeMCU-esp8266-esp-12e-gratuito/dp/B074Q2WM1Y/ref=sr_1_3_sspa?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1BM8JS1ZAZIAV&keywords=esp8266&qid=1641210086&sprefix=esp8266%2Caps%2C87&sr=8-3-spons&psc=1&smid=A1X7QLRQH87QA3&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyTTFQNkZMOUxONTVHJmVuY3J5cHRlZElkPUEwMzMyNzM5MUhPWjlWSjNEMk5ITCZlbmNyeXB0ZWRBZElkPUEwNTk3OTU1UU5SOVlITEszVUJMJndpZGdldE5hbWU9c3BfYXRmJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ==)
 - [Grove ultrasonic atomizer](https://www.reichelt.com/it/it/arduino-grove-nebulizzatore-ad-ultrasuoni-per-acqua-v1-0-eta1-grv-o2-atomiz-v1-p191218.html?r=1)
