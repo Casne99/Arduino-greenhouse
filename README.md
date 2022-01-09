@@ -24,7 +24,7 @@ Here is a list of the software libraries I used:
 
 - [TaskScheduler](https://www.arduino.cc/reference/en/libraries/taskscheduler/) by Anatoli Arkhipenko
 - [SimpleDHT](https://www.arduino.cc/reference/en/libraries/simpledht/) by Winlin
-- [PID_v1](https://github.com/br3ttb/Arduino-PID-Library) by Brett Beauregard
+- [QuickPID](https://www.arduino.cc/reference/en/libraries/quickpid/) by David Lloyd
 
 ## How the program works
 
