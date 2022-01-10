@@ -1,12 +1,20 @@
 #include <TaskScheduler.h>
+#include <SimpleDHT.h>
+#include <QuickPID.h>
 
 /*   Configurazione   */
 
 #define RELE_POMPA D1
 #define ATOMIZZATORE D2
-/*#define RELE_LUCI D4 (con interrupt)
-#define SENSORE_TERRA D3
-#define TR_LED D3*/
+#define SENSORE_TERRA_ENABLE D3
+#define LED_STRIP D4
+#define FOTORESISTENZA_ENABLE D5
+#define PIASTRA D6
+#define FOTORESISTENZA A0   /* LETTURE*/
+#define SENSORE_TERRA A0    /* "MULTIPLEXATE" su A0*/
+#define DHT11_PIN D7
+
+SimpleDHT11 dht11(DHT11_PIN);
 
 
 #define TEMPO_EROGAZIONE 5000 // In millisecondi
@@ -14,13 +22,10 @@
 void pwm_resistenza( );
 void accendi_pompa( );
 void spegni_pompa( );
-//void spegnimento( );
-void accensione( ); 
 void pwm_atom( );
 void pwm_led( );
 void pwm_res( );
-void stampa( );
-
+void leggi( );
 
 
 /*   Globali   */
@@ -28,16 +33,27 @@ void stampa( );
 long timer_pompa;  
 Scheduler scheduler;
 
+float kp_led = 0.1, ki_led = 0.1, kd_led = 0;                 //
+float kp_piastra = 0.5, ki_piastra = 0.5, kd_piastra = 0.5;   // COSTANTI PID
+float kp_neb = 0.5, ki_neb = 0.5, kd_neb = 0.5;               //
+
+float luce_setpoint = 600, luce_in, luce_out;                       //
+float temperatura_setpoint = 23.0, temperatura_in, temperatura_out; // Setpoint, variabili di input e output
+float umid_aria_setpoint, umid_aria_in, umid_aria_out;              //
+
+QuickPID PID_led(&luce_in, &luce_out, &luce_setpoint);
+QuickPID PID_piastra(&temperatura_in, &temperatura_out, &temperatura_setpoint);
+QuickPID PID_neb(&umid_aria_in, &umid_aria_out, &umid_aria_setpoint);
+
 
 /*   TASK   */
 
 Task controllo_pompa(3 * TASK_HOUR, TASK_FOREVER, accendi_pompa);
-Task controllo_res(2 * TASK_SECOND, TASK_FOREVER, pwm_res);
+Task controllo_res(5 * TASK_SECOND, TASK_FOREVER, pwm_res);
 Task stop_pompa(2 * TASK_SECOND, TASK_FOREVER, spegni_pompa);
-Task controllo_atom(2 * TASK_SECOND, TASK_FOREVER, pwm_atom);
+Task controllo_atom(1 * TASK_SECOND, TASK_FOREVER, pwm_atom);
 Task controllo_led(1 * TASK_SECOND, TASK_FOREVER, pwm_led);
-Task stampa_dati(1 * TASK_HOUR, TASK_FOREVER, stampa);
-//Task startup(TASK_ONCE, accensione);
+Task leggi_DHT(1 * TASK_SECOND, TASK_FOREVER, leggi);
 
 
 void setup() {
@@ -45,29 +61,42 @@ void setup() {
   //digitalWrite(RELE_POMPA, HIGH);
   pinMode(RELE_POMPA, OUTPUT);
   pinMode(ATOMIZZATORE, OUTPUT);
-  /*pinMode(SENSORE_TERRA, INPUT);*/
+  pinMode(SENSORE_TERRA_ENABLE, OUTPUT);
+  pinMode(FOTORESISTENZA_ENABLE, OUTPUT);
+  pinMode(LED_STRIP, OUTPUT);
+  pinMode(FOTORESISTENZA, INPUT);
+  pinMode(SENSORE_TERRA, INPUT);
 
+  PID_led.SetTunings(kp_led, ki_led, kd_led);
+  PID_led.SetMode(PID_led.Control::automatic);
+  PID_led.SetOutputLimits(0, 230);
+
+  PID_piastra.SetTunings(kp_piastra, ki_piastra, kd_piastra);
+  PID_piastra.SetMode(PID_piastra.Control::automatic);
+  PID_piastra.SetOutputLimits(0, 190);                // Evito di scaldare troppo la piastra
+
+  PID_neb.SetTunings(kp_neb, ki_neb, kd_neb);
+  PID_neb.SetMode(PID_neb.Control::automatic);
+  
   scheduler.init( );
 
-  /*scheduler.addTask(startup);
-  startup.enable( );*/
   scheduler.addTask(controllo_pompa);
-  //controllo_pompa.enable( ); 
+  controllo_pompa.enable( ); 
 
   scheduler.addTask(controllo_res);
-  //controllo_res.enable( );
+  controllo_res.enable( );
 
   scheduler.addTask(stop_pompa);
-  //stop_pompa.disable( );
+  stop_pompa.disable( );
 
   scheduler.addTask(controllo_atom);
-  //controllo_atom.enable( );
+  controllo_atom.enable( );
 
   scheduler.addTask(controllo_led);
-  //controllo_led.enable( );
+  controllo_led.enable( );
 
-  scheduler.addTask(stampa_dati);
-  //stampa_dati.enable( );
+  scheduler.addTask(leggi_DHT);
+  leggi_DHT.enable( );
  
   Serial.begin(9600);
 
@@ -82,18 +111,20 @@ void loop() {
 
 void accendi_pompa( ) {
 
-  Serial.println(F("ACCENDENDO POMPA"));
-  digitalWrite(RELE_POMPA, LOW);
-  timer_pompa = millis( );
-  stop_pompa.enable( );
-
+  digitalWrite(SENSORE_TERRA_ENABLE, HIGH);
+  int lettura = analogRead(SENSORE_TERRA);
+  if (lettura < 300 /*DA TESTARE*/) {
+    digitalWrite(RELE_POMPA, LOW);
+    timer_pompa = millis( );
+    stop_pompa.enable( );
+  }
+  digitalWrite(SENSORE_TERRA_ENABLE, LOW);
 }
 
 void spegni_pompa( ) {
 
   if ((millis( ) - timer_pompa) >= TEMPO_EROGAZIONE) {
     Serial.println(F("SPEGNENDO POMPA"));
-    /*Serial.println()*/
     digitalWrite(RELE_POMPA, HIGH);
     stop_pompa.disable( );
   }
@@ -102,24 +133,41 @@ void spegni_pompa( ) {
 
 void pwm_res( ) {
 
+  PID_piastra.Compute( );
+  analogWrite(PIASTRA, temperatura_setpoint);
+
 }
 
 void pwm_atom( ) {
+
+  PID_neb.Compute( );
+  analogWrite(ATOMIZZATORE, umid_aria_out);
 
 }
 
 void pwm_led( ) {
 
+  digitalWrite(FOTORESISTENZA_ENABLE, HIGH);
+  luce_in = analogRead(FOTORESISTENZA);
+  PID_led.Compute( );
+  analogWrite(LED_STRIP, luce_out);
+  digitalWrite(FOTORESISTENZA_ENABLE, LOW);
+
 }
 
-void stampa( ) {
+void leggi( ) {
 
+  byte temp = 0, humid = 0;
+  int err = SimpleDHTErrSuccess;
+  if((err = dht11.read(&temp, &humid, NULL)) != SimpleDHTErrSuccess) {
+    Serial.print("Lettura DHT11 fallita, errore="); Serial.print(SimpleDHTErrCode(err));
+    return;
+  }
+  
+  temperatura_in = ((float) temp);
+  umid_aria_in = ((float) humid);
+  Serial.print("Sample OK: ");
+  Serial.printf("Temperatura: %d *C\n", (int) temp);
+  Serial.printf("Umidita: %d %\n", (int) humid);
+  
 }
-
-void spegnimento( ) {
-  //...
-}
-
-void accensione( ) {
-
-} 
