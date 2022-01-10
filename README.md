@@ -17,7 +17,8 @@ Here is a list of all the components I used:
 - 3V relay
 
 Also check this [kit](https://www.amazon.it/RUNCCI-YUN-Irrigazione-Automatico-Misurazione-Sommergibile/dp/B0814HXWVV/ref=sr_1_4?keywords=arduino+water+pump&qid=1641211244&sprefix=arduino+wat%2Caps%2C87&sr=8-4) that includes a 5V relay (also works with 3.3V), a DC water pump and a soil capacitive sensor.
-**Before** buying a soil capacitive sensor I suggest you to watch [this video](https://www.youtube.com/watch?v=IGP38bz-K48) by [Flaura](https://www.youtube.com/channel/UCAtCwTQljeSkqKOKZ6kRAbg) about this type of sensor. It is found that about **82%** of them have **major design flaws**!. The video analyzes the most common design flaws and proposes, when possible, quick fixes.  
+**Before** buying a soil capacitive sensor I suggest you to watch [this video](https://www.youtube.com/watch?v=IGP38bz-K48) by [Flaura](https://www.youtube.com/channel/UCAtCwTQljeSkqKOKZ6kRAbg) about this type of sensor.  
+It is found that about **82%** of them have **major design flaws**! The video analyzes the most common design flaws and proposes, when possible, quick fixes.  
 The soil capacitive sensor from the kit I linked works perfectly with my ESP8266.  
 ## Software libraries
 
