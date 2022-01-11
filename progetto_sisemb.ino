@@ -1,6 +1,9 @@
 #include <TaskScheduler.h>
 #include <SimpleDHT.h>
 #include <QuickPID.h>
+#include <NTPClient.h>
+#include <ESP8266WiFi.h>
+#include <WiFiUdp.h>
 
 /*   Configurazione   */
 
@@ -19,18 +22,35 @@ SimpleDHT11 dht11(DHT11_PIN);
 
 #define TEMPO_EROGAZIONE 5000 // In millisecondi
 
+
 void pwm_resistenza( );
+void modalita_luce( );
 void accendi_pompa( );
 void spegni_pompa( );
+void update_tempo( );
 void pwm_atom( );
 void pwm_led( );
 void pwm_res( );
 void leggi( );
+void sync( );
 
 
 /*   Globali   */
 
-long timer_pompa;  
+const char *ssid     = "YOUR SSID";
+const char *password = "YOUR PASSWORD";
+
+const long utcOffsetInSeconds = 3600;
+
+char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+int ore, minuti, secondi;
+
+// Define NTP Client to get time
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
+
+long timer_pompa;
 Scheduler scheduler;
 
 float kp_led = 0.1, ki_led = 0.1, kd_led = 0;                 //
@@ -48,6 +68,9 @@ QuickPID PID_neb(&umid_aria_in, &umid_aria_out, &umid_aria_setpoint);
 
 /*   TASK   */
 
+Task modalita_notte(1 * TASK_MINUTE, TASK_FOREVER, modalita_luce);
+Task aggiorna_orario(1 * TASK_MINUTE, TASK_FOREVER, update_tempo);
+Task sincronizza_ora(24 * TASK_HOUR, TASK_FOREVER, sync);
 Task controllo_pompa(3 * TASK_HOUR, TASK_FOREVER, accendi_pompa);
 Task controllo_res(5 * TASK_SECOND, TASK_FOREVER, pwm_res);
 Task stop_pompa(2 * TASK_SECOND, TASK_FOREVER, spegni_pompa);
@@ -57,6 +80,8 @@ Task leggi_DHT(1 * TASK_SECOND, TASK_FOREVER, leggi);
 
 
 void setup() {
+
+  Serial.begin(9600);
 
   //digitalWrite(RELE_POMPA, HIGH);
   pinMode(RELE_POMPA, OUTPUT);
@@ -77,7 +102,7 @@ void setup() {
 
   PID_neb.SetTunings(kp_neb, ki_neb, kd_neb);
   PID_neb.SetMode(PID_neb.Control::automatic);
-  
+
   scheduler.init( );
 
   scheduler.addTask(controllo_pompa);
@@ -93,12 +118,19 @@ void setup() {
   controllo_atom.enable( );
 
   scheduler.addTask(controllo_led);
-  controllo_led.enable( );
+  //controllo_led.enable( );
 
   scheduler.addTask(leggi_DHT);
   leggi_DHT.enable( );
  
-  Serial.begin(9600);
+  WiFi.begin(ssid, password);
+
+  while ( WiFi.status() != WL_CONNECTED ) {
+    delay ( 500 );
+    Serial.print ( "." );
+  }
+
+  timeClient.begin();
 
 }
 
@@ -128,7 +160,6 @@ void spegni_pompa( ) {
     digitalWrite(RELE_POMPA, HIGH);
     stop_pompa.disable( );
   }
-
 }
 
 void pwm_res( ) {
@@ -170,4 +201,27 @@ void leggi( ) {
   Serial.printf("Temperatura: %d *C\n", (int) temp);
   Serial.printf("Umidita: %d %\n", (int) humid);
   
+}
+
+void sync( ) {
+  timeClient.update( );
+  ore = timeClient.getHours( );
+  minuti = timeClient.getMinutes( );
+  secondi = timeClient.getSeconds( );
+}
+
+void modalita_luce( ) {
+
+  if ((ore > 20 || ore < 7) && !controllo_led.isEnabled( ))
+    controllo_led.enable( );
+  else if ((ore > 6 && ore < 21) && controllo_led.isEnabled( ))
+    controllo_led.disable( );
+
+}
+
+void update_tempo( ) {
+
+  minuti = (minuti + 1) % 60;
+  if (!minuti) ore = (ore + 1) % 24;
+
 }
