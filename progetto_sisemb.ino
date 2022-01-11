@@ -36,8 +36,8 @@ void sync( );
 
 /*   Globali   */
 
-const char *ssid     = "TIM-19087353";
-const char *password = "63669099Mc";
+const char *ssid     = "your ssid";
+const char *password = "your password";
 
 const long utcOffsetInSeconds = 3600;
 
