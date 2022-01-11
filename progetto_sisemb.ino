@@ -13,14 +13,13 @@
 #define LED_STRIP D4
 #define FOTORESISTENZA_ENABLE D5
 #define PIASTRA D6
-#define FOTORESISTENZA A0   /* LETTURE*/
-#define SENSORE_TERRA A0    /* "MULTIPLEXATE" su A0*/
+#define FOTORESISTENZA A0
 #define DHT11_PIN D7
 
 SimpleDHT11 dht11(DHT11_PIN);
 
 
-#define TEMPO_EROGAZIONE 5000 // In millisecondi
+#define TEMPO_EROGAZIONE 4000 // In millisecondi
 
 
 void pwm_resistenza( );
@@ -32,21 +31,22 @@ void pwm_atom( );
 void pwm_led( );
 void pwm_res( );
 void leggi( );
+void avvio( );
 void sync( );
 
 
 /*   Globali   */
 
-const char *ssid     = "YOUR SSID";
-const char *password = "YOUR PASSWORD";
+const char *ssid     = "TIM-19087353";
+const char *password = "63669099Mc";
 
 const long utcOffsetInSeconds = 3600;
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-int ore, minuti, secondi;
+int ore = 0, minuti = 0, secondi = 0;
 
-// Define NTP Client to get time
+// Definisco client NTP
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 
@@ -70,7 +70,7 @@ QuickPID PID_neb(&umid_aria_in, &umid_aria_out, &umid_aria_setpoint);
 
 Task modalita_notte(1 * TASK_MINUTE, TASK_FOREVER, modalita_luce);
 Task aggiorna_orario(1 * TASK_MINUTE, TASK_FOREVER, update_tempo);
-Task sincronizza_ora(24 * TASK_HOUR, TASK_FOREVER, sync);
+Task sincronizza_ora(6 * TASK_HOUR, TASK_FOREVER, sync);
 Task controllo_pompa(3 * TASK_HOUR, TASK_FOREVER, accendi_pompa);
 Task controllo_res(5 * TASK_SECOND, TASK_FOREVER, pwm_res);
 Task stop_pompa(2 * TASK_SECOND, TASK_FOREVER, spegni_pompa);
@@ -79,21 +79,25 @@ Task controllo_led(1 * TASK_SECOND, TASK_FOREVER, pwm_led);
 Task leggi_DHT(1 * TASK_SECOND, TASK_FOREVER, leggi);
 
 
-void setup() {
+void setup_Wifi( ) {
+  WiFi.begin(ssid, password);
 
-  Serial.begin(9600);
+  Serial.print("\n\n");
+  Serial.print("Connettendo a ");
+  Serial.printf("%s\n", ssid);
 
-  //digitalWrite(RELE_POMPA, HIGH);
-  pinMode(RELE_POMPA, OUTPUT);
-  pinMode(ATOMIZZATORE, OUTPUT);
-  pinMode(SENSORE_TERRA_ENABLE, OUTPUT);
-  pinMode(FOTORESISTENZA_ENABLE, OUTPUT);
-  pinMode(LED_STRIP, OUTPUT);
-  pinMode(FOTORESISTENZA, INPUT);
-  pinMode(SENSORE_TERRA, INPUT);
+  while ( WiFi.status() != WL_CONNECTED ) {
+    delay ( 500 );
+    Serial.print ( "." );
+  }
+  Serial.println("Connessione stabilita");
+}
+
+void set_PID_parameters( ) {
 
   PID_led.SetTunings(kp_led, ki_led, kd_led);
   PID_led.SetMode(PID_led.Control::automatic);
+  //PID_led.SetControllerDirection(Action::direct);
   PID_led.SetOutputLimits(0, 230);
 
   PID_piastra.SetTunings(kp_piastra, ki_piastra, kd_piastra);
@@ -102,8 +106,16 @@ void setup() {
 
   PID_neb.SetTunings(kp_neb, ki_neb, kd_neb);
   PID_neb.SetMode(PID_neb.Control::automatic);
+}
 
+void setup_scheduler( ) {
   scheduler.init( );
+
+  scheduler.addTask(sincronizza_ora);
+  sincronizza_ora.enable( );
+
+  scheduler.addTask(modalita_notte);
+  modalita_notte.enable( );
 
   scheduler.addTask(controllo_pompa);
   controllo_pompa.enable( ); 
@@ -122,15 +134,28 @@ void setup() {
 
   scheduler.addTask(leggi_DHT);
   leggi_DHT.enable( );
- 
-  WiFi.begin(ssid, password);
 
-  while ( WiFi.status() != WL_CONNECTED ) {
-    delay ( 500 );
-    Serial.print ( "." );
-  }
+  scheduler.addTask(aggiorna_orario);
+  aggiorna_orario.enable( );
+}
 
-  timeClient.begin();
+
+void setup() {
+
+  Serial.begin(9600);
+
+  setup_Wifi( );
+  set_PID_parameters( );
+  setup_scheduler( );
+  timeClient.begin( );
+
+  //digitalWrite(RELE_POMPA, HIGH);
+  pinMode(RELE_POMPA, OUTPUT);
+  pinMode(ATOMIZZATORE, OUTPUT);
+  pinMode(SENSORE_TERRA_ENABLE, OUTPUT);
+  pinMode(FOTORESISTENZA_ENABLE, OUTPUT);
+  pinMode(LED_STRIP, OUTPUT);
+  pinMode(FOTORESISTENZA, INPUT);
 
 }
 
@@ -143,20 +168,16 @@ void loop() {
 
 void accendi_pompa( ) {
 
-  digitalWrite(SENSORE_TERRA_ENABLE, HIGH);
-  int lettura = analogRead(SENSORE_TERRA);
-  if (lettura < 300 /*DA TESTARE*/) {
-    digitalWrite(RELE_POMPA, LOW);
-    timer_pompa = millis( );
-    stop_pompa.enable( );
-  }
-  digitalWrite(SENSORE_TERRA_ENABLE, LOW);
+  digitalWrite(RELE_POMPA, LOW);
+  timer_pompa = millis( );
+  stop_pompa.enable( );
+
 }
 
 void spegni_pompa( ) {
 
   if ((millis( ) - timer_pompa) >= TEMPO_EROGAZIONE) {
-    Serial.println(F("SPEGNENDO POMPA"));
+    Serial.println("SPEGNENDO POMPA");
     digitalWrite(RELE_POMPA, HIGH);
     stop_pompa.disable( );
   }
@@ -191,7 +212,7 @@ void leggi( ) {
   byte temp = 0, humid = 0;
   int err = SimpleDHTErrSuccess;
   if((err = dht11.read(&temp, &humid, NULL)) != SimpleDHTErrSuccess) {
-    Serial.print("Lettura DHT11 fallita, errore="); Serial.print(SimpleDHTErrCode(err));
+    Serial.print("Lettura DHT11 fallita, errore="); Serial.println(SimpleDHTErrCode(err));
     return;
   }
   
@@ -204,10 +225,15 @@ void leggi( ) {
 }
 
 void sync( ) {
+
+  Serial.print("Sincronizzo orario\n");
+
   timeClient.update( );
   ore = timeClient.getHours( );
   minuti = timeClient.getMinutes( );
   secondi = timeClient.getSeconds( );
+
+  Serial.printf("Orario ufficiale: %d:%d:%d\n\n", ore, minuti, secondi);
 }
 
 void modalita_luce( ) {
