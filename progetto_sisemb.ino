@@ -31,7 +31,6 @@ void pwm_atom( );
 void pwm_led( );
 void pwm_res( );
 void leggi( );
-void avvio( );
 void sync( );
 
 
