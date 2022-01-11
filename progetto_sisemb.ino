@@ -93,7 +93,6 @@ void set_PID_parameters( ) {
 
   PID_led.SetTunings(kp_led, ki_led, kd_led);
   PID_led.SetMode(PID_led.Control::automatic);
-  //PID_led.SetControllerDirection(Action::direct);
   PID_led.SetOutputLimits(0, 230);
 
   PID_piastra.SetTunings(kp_piastra, ki_piastra, kd_piastra);
@@ -209,7 +208,7 @@ void leggi( ) {
   byte temp = 0, humid = 0;
   int err = SimpleDHTErrSuccess;
   if((err = dht11.read(&temp, &humid, NULL)) != SimpleDHTErrSuccess) {
-    Serial.print("Lettura DHT11 fallita, errore="); Serial.println(SimpleDHTErrCode(err));
+    Serial.print("Lettura DHT11 fallita, errore = "); Serial.println(SimpleDHTErrCode(err));
     return;
   }
   
