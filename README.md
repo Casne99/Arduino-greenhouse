@@ -26,6 +26,9 @@ Here is a list of the software libraries I used:
 - [TaskScheduler](https://www.arduino.cc/reference/en/libraries/taskscheduler/) by Anatoli Arkhipenko
 - [SimpleDHT](https://www.arduino.cc/reference/en/libraries/simpledht/) by Winlin
 - [QuickPID](https://www.arduino.cc/reference/en/libraries/quickpid/) by David Lloyd
+- [NTPClient](https://www.arduino.cc/reference/en/libraries/ntpclient/)
+- ESP8266Wifi.h
+- WifiUdp.h
 
 ## How the program works
 
