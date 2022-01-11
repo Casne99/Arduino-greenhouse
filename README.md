@@ -9,6 +9,7 @@ Software is written using the [Arduino IDE](https://www.arduino.cc/en/software).
 Here is a list of all the components I used:
 
 - x1 [ESP 8266 board](https://www.amazon.it/AZDelivery-NodeMCU-esp8266-esp-12e-gratuito/dp/B074Q2WM1Y/ref=sr_1_3_sspa?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1BM8JS1ZAZIAV&keywords=esp8266&qid=1641210086&sprefix=esp8266%2Caps%2C87&sr=8-3-spons&psc=1&smid=A1X7QLRQH87QA3&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyTTFQNkZMOUxONTVHJmVuY3J5cHRlZElkPUEwMzMyNzM5MUhPWjlWSjNEMk5ITCZlbmNyeXB0ZWRBZElkPUEwNTk3OTU1UU5SOVlITEszVUJMJndpZGdldE5hbWU9c3BfYXRmJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ==)
+- x1 ATX Power supply
 - x1 [Grove ultrasonic atomizer](https://www.reichelt.com/it/it/arduino-grove-nebulizzatore-ad-ultrasuoni-per-acqua-v1-0-eta1-grv-o2-atomiz-v1-p191218.html?r=1)
 - x1 [5V DC water pump](https://www.amazon.it/pittospwer-Noise-Brushless-Motor-sommergibile/dp/B07SNQSYSG/ref=sr_1_11?crid=27OXE4488WYJ2&keywords=arduino+water+pump&qid=1641210437&sprefix=arduino+water+pump%2Caps%2C77&sr=8-11) (also works with 3.3V)
 - x1 [Heating plate](https://www.amazon.it/gp/product/B07FJY4PCL/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&th=1)
