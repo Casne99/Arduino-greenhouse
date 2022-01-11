@@ -80,9 +80,7 @@ Task leggi_DHT(1 * TASK_SECOND, TASK_FOREVER, leggi);
 void setup_Wifi( ) {
   WiFi.begin(ssid, password);
 
-  Serial.print("\n\n");
-  Serial.print("Connettendo a ");
-  Serial.printf("%s\n", ssid);
+  Serial.printf("\n\nConnettendo a %s\n", ssid);
 
   while ( WiFi.status() != WL_CONNECTED ) {
     delay ( 500 );
