@@ -1,4 +1,4 @@
-# ESP-greenhouse
+# ESP-greenhouse 🌱🌾
 Small university project for the "Embedded Systems" course at Università degli Studi di Milano.  
 
 This is a project that uses an ESP8266 board to directly control various parameters of a homemade small greenhouse using PID control software libraries.  
