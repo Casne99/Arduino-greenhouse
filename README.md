@@ -13,7 +13,8 @@ Here is a list of all the components I used:
 - x1 [5V DC water pump](https://www.amazon.it/pittospwer-Noise-Brushless-Motor-sommergibile/dp/B07SNQSYSG/ref=sr_1_11?crid=27OXE4488WYJ2&keywords=arduino+water+pump&qid=1641210437&sprefix=arduino+water+pump%2Caps%2C77&sr=8-11) (also works with 3.3V)
 - x1 [Heating plate](https://www.amazon.it/gp/product/B07FJY4PCL/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&th=1)
 - x4 [Transistors](https://www.amazon.it/ICQUANZX-interruttore-Regolazione-Interruttore-elettronico/dp/B07VRCXGFY/ref=sr_1_2?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=mosfet+esp32&qid=1639417941&sr=8-2)
-- 3V relay
+- x1 [led strip](https://www.amazon.it/MASUNN-Silicon-Fredda-Impermeabile-Bianco/dp/B087QKZ8R4/ref=sr_1_9?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=3UJ3Y4EXWJNLH&keywords=12v%2Bled%2Bstrip&qid=1641311784&sprefix=12v%2Bled%2Bstrip%2Caps%2C93&sr=8-9&th=1)
+- x1 3V relay
 
 Also check this [kit](https://www.amazon.it/RUNCCI-YUN-Irrigazione-Automatico-Misurazione-Sommergibile/dp/B0814HXWVV/ref=sr_1_4?keywords=arduino+water+pump&qid=1641211244&sprefix=arduino+wat%2Caps%2C87&sr=8-4) that includes a 5V relay (also works with 3.3V), a DC water pump and a soil capacitive sensor.  
 If you'd like to purchase one, **before** buying a soil capacitive sensor I suggest you to watch [this video](https://www.youtube.com/watch?v=IGP38bz-K48) by [Flaura](https://www.youtube.com/channel/UCAtCwTQljeSkqKOKZ6kRAbg) channel about this type of sensor: it is found that about **82%** of them have **major design flaws**! The video analyzes the most common design flaws and proposes, when possible, quick fixes.  
