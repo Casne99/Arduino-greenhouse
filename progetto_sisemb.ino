@@ -36,8 +36,8 @@ void sync( );
 
 /*   Globali   */
 
-const char *ssid     = "your ssid";
-const char *password = "your password";
+const char *ssid     = "TIM-19087353";
+const char *password = "63669099Mc";
 
 const long utcOffsetInSeconds = 3600;
 
@@ -63,7 +63,6 @@ float umid_aria_setpoint, umid_aria_in, umid_aria_out;              //
 QuickPID PID_led(&luce_in, &luce_out, &luce_setpoint);
 QuickPID PID_piastra(&temperatura_in, &temperatura_out, &temperatura_setpoint);
 QuickPID PID_neb(&umid_aria_in, &umid_aria_out, &umid_aria_setpoint);
-
 
 /*   TASK   */
 
@@ -167,6 +166,7 @@ void loop() {
 
 void accendi_pompa( ) {
 
+  Serial.println("ACCENDENDO POMPA");
   digitalWrite(RELE_POMPA, LOW);
   timer_pompa = millis( );
   stop_pompa.enable( );
@@ -217,9 +217,9 @@ void leggi( ) {
   
   temperatura_in = ((float) temp);
   umid_aria_in = ((float) humid);
-  Serial.print("Sample OK: ");
-  Serial.printf("Temperatura: %d *C\n", (int) temp);
-  Serial.printf("Umidita: %d %\n", (int) humid);
+  Serial.printf("Sample OK: \nTemperatura: %d *C\nUmidita: %d %\n", (int) temp, (int) humid);
+  /*Serial.printf("Temperatura: %d *C\n", (int) temp);
+  Serial.printf("Umidita: %d %\n", (int) humid);*/
   
 }
 
