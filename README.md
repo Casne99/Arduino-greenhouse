@@ -16,7 +16,7 @@ Here is a list of all the components I used:
 - 3V relay
 
 Also check this [kit](https://www.amazon.it/RUNCCI-YUN-Irrigazione-Automatico-Misurazione-Sommergibile/dp/B0814HXWVV/ref=sr_1_4?keywords=arduino+water+pump&qid=1641211244&sprefix=arduino+wat%2Caps%2C87&sr=8-4) that includes a 5V relay (also works with 3.3V), a DC water pump and a soil capacitive sensor.  
-**Before** buying a soil capacitive sensor I suggest you to watch [this video](https://www.youtube.com/watch?v=IGP38bz-K48) by [Flaura](https://www.youtube.com/channel/UCAtCwTQljeSkqKOKZ6kRAbg) channel about this type of sensor: it is found that about **82%** of them have **major design flaws**! The video analyzes the most common design flaws and proposes, when possible, quick fixes.  
+If you'd like to purchase one, **before** buying a soil capacitive sensor I suggest you to watch [this video](https://www.youtube.com/watch?v=IGP38bz-K48) by [Flaura](https://www.youtube.com/channel/UCAtCwTQljeSkqKOKZ6kRAbg) channel about this type of sensor: it is found that about **82%** of them have **major design flaws**! The video analyzes the most common design flaws and proposes, when possible, quick fixes.  
 ## Software libraries
 
 Here is a list of the software libraries I used:
@@ -27,9 +27,3 @@ Here is a list of the software libraries I used:
 - [NTPClient](https://www.arduino.cc/reference/en/libraries/ntpclient/)
 - ESP8266Wifi.h
 - WifiUdp.h
-
-## How the program works
-
-
-
-
