@@ -15,7 +15,7 @@ Here is a list of all the components I used:
 - x4 [Transistors](https://www.amazon.it/ICQUANZX-interruttore-Regolazione-Interruttore-elettronico/dp/B07VRCXGFY/ref=sr_1_2?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=mosfet+esp32&qid=1639417941&sr=8-2)
 - x1 [Led strip](https://www.amazon.it/MASUNN-Silicon-Fredda-Impermeabile-Bianco/dp/B087QKZ8R4/ref=sr_1_9?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=3UJ3Y4EXWJNLH&keywords=12v%2Bled%2Bstrip&qid=1641311784&sprefix=12v%2Bled%2Bstrip%2Caps%2C93&sr=8-9&th=1)
 - x1 [DHT11 sensor](https://www.amazon.it/AZDelivery-KY-015-Modulo-Sensore-Temperatura/dp/B089W8DB5P/ref=sr_1_5?crid=3KICFV6ACJTFR&keywords=dht11&qid=1641922786&sprefix=dht%2Caps%2C87&sr=8-5&th=1)
-- x1 10KOhm Resistor
+- x1 10K Resistor
 - x1 3V relay
 - x1 ATX PSU (must have 12V and 5V output)
 - x1 Photoresistor like [these](https://www.amazon.it/Fotoresistenza-Xiuyer-Resistore-Dipendente-Sensibili/dp/B083QFYKS2/ref=sr_1_3_sspa?keywords=photoresistor&qid=1641922959&s=electronics&sr=1-3-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEzMEFPMzE0MktFQVVZJmVuY3J5cHRlZElkPUEwMzYyMTg5MTRMOERIRDZIVU0yNiZlbmNyeXB0ZWRBZElkPUEwODA4MTU3M0NKSTJNMFlOMk9EUyZ3aWRnZXROYW1lPXNwX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=)
