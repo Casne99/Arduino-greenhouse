@@ -12,7 +12,7 @@ Here is a list of all the components I used:
 - x1 [Grove ultrasonic atomizer](https://www.reichelt.com/it/it/arduino-grove-nebulizzatore-ad-ultrasuoni-per-acqua-v1-0-eta1-grv-o2-atomiz-v1-p191218.html?r=1)
 - x1 [5V DC water pump](https://www.amazon.it/pittospwer-Noise-Brushless-Motor-sommergibile/dp/B07SNQSYSG/ref=sr_1_11?crid=27OXE4488WYJ2&keywords=arduino+water+pump&qid=1641210437&sprefix=arduino+water+pump%2Caps%2C77&sr=8-11) (also works with 3.3V)
 - x1 [Heating plate](https://www.amazon.it/gp/product/B07FJY4PCL/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&th=1)
-- x4 [Dual MOSFETs](https://www.amazon.it/ICQUANZX-interruttore-Regolazione-Interruttore-elettronico/dp/B07VRCXGFY/ref=sr_1_2?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=mosfet+esp32&qid=1639417941&sr=8-2)
+- x4 [Dual MOSFET](https://www.amazon.it/ICQUANZX-interruttore-Regolazione-Interruttore-elettronico/dp/B07VRCXGFY/ref=sr_1_2?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=mosfet+esp32&qid=1639417941&sr=8-2)
 - x1 [Led strip](https://www.amazon.it/MASUNN-Silicon-Fredda-Impermeabile-Bianco/dp/B087QKZ8R4/ref=sr_1_9?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=3UJ3Y4EXWJNLH&keywords=12v%2Bled%2Bstrip&qid=1641311784&sprefix=12v%2Bled%2Bstrip%2Caps%2C93&sr=8-9&th=1)
 - x1 [DHT11 sensor](https://www.amazon.it/AZDelivery-KY-015-Modulo-Sensore-Temperatura/dp/B089W8DB5P/ref=sr_1_5?crid=3KICFV6ACJTFR&keywords=dht11&qid=1641922786&sprefix=dht%2Caps%2C87&sr=8-5&th=1)
 - x1 10K Resistor
