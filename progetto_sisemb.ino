@@ -9,7 +9,6 @@
 
 #define RELE_POMPA D1
 #define ATOMIZZATORE D2
-#define SENSORE_TERRA_ENABLE D3
 #define LED_STRIP D4
 #define FOTORESISTENZA_ENABLE D5
 #define PIASTRA D6
@@ -19,7 +18,7 @@
 SimpleDHT11 dht11(DHT11_PIN);
 
 
-#define TEMPO_EROGAZIONE 4000 // In millisecondi
+#define TEMPO_EROGAZIONE 1000 // In millisecondi
 
 
 void pwm_resistenza( );
@@ -49,16 +48,16 @@ int ore = 0, minuti = 0, secondi = 0;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 
-long timer_pompa;
+long timer_pompa = 0;
 Scheduler scheduler;
 
 float kp_led = 0.1, ki_led = 0.1, kd_led = 0;                 //
 float kp_piastra = 0.5, ki_piastra = 0.5, kd_piastra = 0.5;   // COSTANTI PID
-float kp_neb = 0.5, ki_neb = 0.5, kd_neb = 0.5;               //
+float kp_neb = 0.1, ki_neb = 0.1, kd_neb = 0;                 //
 
 float luce_setpoint = 600, luce_in, luce_out;                       //
-float temperatura_setpoint = 23.0, temperatura_in, temperatura_out; // Setpoint, variabili di input e output
-float umid_aria_setpoint, umid_aria_in, umid_aria_out;              //
+float temperatura_setpoint = 24.0, temperatura_in, temperatura_out; // Setpoint, variabili di input e output
+float umid_aria_setpoint = 65.0, umid_aria_in, umid_aria_out;       //
 
 QuickPID PID_led(&luce_in, &luce_out, &luce_setpoint);
 QuickPID PID_piastra(&temperatura_in, &temperatura_out, &temperatura_setpoint);
@@ -69,7 +68,7 @@ QuickPID PID_neb(&umid_aria_in, &umid_aria_out, &umid_aria_setpoint);
 Task modalita_notte(1 * TASK_MINUTE, TASK_FOREVER, modalita_luce);
 Task aggiorna_orario(1 * TASK_MINUTE, TASK_FOREVER, update_tempo);
 Task sincronizza_ora(6 * TASK_HOUR, TASK_FOREVER, sync);
-Task controllo_pompa(3 * TASK_HOUR, TASK_FOREVER, accendi_pompa);
+Task controllo_pompa(4 * TASK_HOUR, TASK_FOREVER, accendi_pompa);
 Task controllo_res(5 * TASK_SECOND, TASK_FOREVER, pwm_res);
 Task stop_pompa(2 * TASK_SECOND, TASK_FOREVER, spegni_pompa);
 Task controllo_atom(1 * TASK_SECOND, TASK_FOREVER, pwm_atom);
@@ -83,10 +82,10 @@ void setup_Wifi( ) {
   Serial.printf("\n\nConnettendo a %s\n", ssid);
 
   while ( WiFi.status() != WL_CONNECTED ) {
-    delay ( 500 );
-    Serial.print ( "." );
+    delay(500);
+    Serial.print(".");
   }
-  Serial.println("Connessione stabilita");
+  Serial.print("Connessione stabilita\n\n");
 }
 
 void set_PID_parameters( ) {
@@ -144,10 +143,14 @@ void setup() {
   setup_scheduler( );
   timeClient.begin( );
 
-  //digitalWrite(RELE_POMPA, HIGH);
+  digitalWrite(LED_STRIP, LOW);
+  digitalWrite(ATOMIZZATORE, LOW);
+  digitalWrite(RELE_POMPA, HIGH);
+  digitalWrite(FOTORESISTENZA_ENABLE, LOW);
+  digitalWrite(PIASTRA, LOW);
+
   pinMode(RELE_POMPA, OUTPUT);
   pinMode(ATOMIZZATORE, OUTPUT);
-  pinMode(SENSORE_TERRA_ENABLE, OUTPUT);
   pinMode(FOTORESISTENZA_ENABLE, OUTPUT);
   pinMode(LED_STRIP, OUTPUT);
   pinMode(FOTORESISTENZA, INPUT);
@@ -215,9 +218,6 @@ void leggi( ) {
   temperatura_in = ((float) temp);
   umid_aria_in = ((float) humid);
   Serial.printf("Sample OK: \nTemperatura: %d *C\nUmidita: %d %\n", (int) temp, (int) humid);
-  /*Serial.printf("Temperatura: %d *C\n", (int) temp);
-  Serial.printf("Umidita: %d %\n", (int) humid);*/
-  
 }
 
 void sync( ) {
@@ -234,7 +234,7 @@ void sync( ) {
 
 void modalita_luce( ) {
 
-  if ((ore > 20 || ore < 7) && !controllo_led.isEnabled( ))
+  if (/*(ore > 20 || ore < 7)*/(ore > 12) && !controllo_led.isEnabled( ))
     controllo_led.enable( );
   else if ((ore > 6 && ore < 21) && controllo_led.isEnabled( ))
     controllo_led.disable( );
