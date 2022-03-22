@@ -21,6 +21,8 @@ SimpleDHT11 dht11(DHT11_PIN);
 #define TEMPO_EROGAZIONE 1000 // In millisecondi
 
 
+/* Prototipi funzioni */
+
 void pwm_resistenza( );
 void modalita_luce( );
 void accendi_pompa( );
@@ -30,13 +32,14 @@ void pwm_atom( );
 void pwm_led( );
 void pwm_res( );
 void leggi( );
+void print( );
 void sync( );
 
 
 /*   Globali   */
 
-const char *ssid     = "your ssid";
-const char *password = "your password";
+const char *ssid     = /*"TIM-19087353"*/"FRITZ!Powerline 540E";
+const char *password = /*"63669099Mc"*/"07111846058893390371";
 
 const long utcOffsetInSeconds = 3600;
 
@@ -51,11 +54,11 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 long timer_pompa = 0;
 Scheduler scheduler;
 
-float kp_led = 0.1, ki_led = 0.1, kd_led = 0;                 //
-float kp_piastra = 0.5, ki_piastra = 0.5, kd_piastra = 0.5;   // COSTANTI PID
-float kp_neb = 0.1, ki_neb = 0.1, kd_neb = 0;                 //
+float kp_led = 0.1, ki_led = 0, kd_led = 0;                 //
+float kp_piastra = 3.5, ki_piastra = 0.5, kd_piastra = 1.3;   // COSTANTI PID
+float kp_neb = 1, ki_neb = 0.1, kd_neb = 0.5;                 //
 
-float luce_setpoint = 600, luce_in, luce_out;                       //
+float luce_setpoint = 475, luce_in, luce_out;                       //
 float temperatura_setpoint = 24.0, temperatura_in, temperatura_out; // Setpoint, variabili di input e output
 float umid_aria_setpoint = 65.0, umid_aria_in, umid_aria_out;       //
 
@@ -65,15 +68,16 @@ QuickPID PID_neb(&umid_aria_in, &umid_aria_out, &umid_aria_setpoint);
 
 /*   TASK   */
 
-Task modalita_notte(1 * TASK_MINUTE, TASK_FOREVER, modalita_luce);
+//Task modalita_notte(1 * TASK_MINUTE, TASK_FOREVER, modalita_luce);
 Task aggiorna_orario(1 * TASK_MINUTE, TASK_FOREVER, update_tempo);
 Task sincronizza_ora(6 * TASK_HOUR, TASK_FOREVER, sync);
-Task controllo_pompa(4 * TASK_HOUR, TASK_FOREVER, accendi_pompa);
-Task controllo_res(5 * TASK_SECOND, TASK_FOREVER, pwm_res);
+Task controllo_pompa(/*4 * TASK_HOUR*/ 50 * TASK_SECOND, TASK_FOREVER, accendi_pompa);
+Task controllo_res(0.2 * TASK_SECOND, TASK_FOREVER, pwm_res);
 Task stop_pompa(2 * TASK_SECOND, TASK_FOREVER, spegni_pompa);
-Task controllo_atom(1 * TASK_SECOND, TASK_FOREVER, pwm_atom);
-Task controllo_led(1 * TASK_SECOND, TASK_FOREVER, pwm_led);
-Task leggi_DHT(1 * TASK_SECOND, TASK_FOREVER, leggi);
+Task controllo_atom(0.02 * TASK_SECOND, TASK_FOREVER, pwm_atom);
+Task controllo_led(0.1 * TASK_SECOND, TASK_FOREVER, pwm_led);
+Task leggi_DHT(2 * TASK_SECOND, TASK_FOREVER, leggi);
+Task stampa_output(4 * TASK_SECOND, TASK_FOREVER, print);
 
 
 void setup_Wifi( ) {
@@ -96,7 +100,7 @@ void set_PID_parameters( ) {
 
   PID_piastra.SetTunings(kp_piastra, ki_piastra, kd_piastra);
   PID_piastra.SetMode(PID_piastra.Control::automatic);
-  PID_piastra.SetOutputLimits(0, 190);                // Evito di scaldare troppo la piastra
+  //PID_piastra.SetOutputLimits(0, 190);                // Evito di scaldare troppo la piastra
 
   PID_neb.SetTunings(kp_neb, ki_neb, kd_neb);
   PID_neb.SetMode(PID_neb.Control::automatic);
@@ -108,8 +112,8 @@ void setup_scheduler( ) {
   scheduler.addTask(sincronizza_ora);
   sincronizza_ora.enable( );
 
-  scheduler.addTask(modalita_notte);
-  modalita_notte.enable( );
+  /*scheduler.addTask(modalita_notte);
+  modalita_notte.enable( );*/
 
   scheduler.addTask(controllo_pompa);
   controllo_pompa.enable( ); 
@@ -124,17 +128,26 @@ void setup_scheduler( ) {
   controllo_atom.enable( );
 
   scheduler.addTask(controllo_led);
-  //controllo_led.enable( );
+  controllo_led.enable( );
 
   scheduler.addTask(leggi_DHT);
   leggi_DHT.enable( );
 
   scheduler.addTask(aggiorna_orario);
   aggiorna_orario.enable( );
+
+  scheduler.addTask(stampa_output);
+  stampa_output.enable( );
 }
 
 
 void setup() {
+
+  digitalWrite(LED_STRIP, LOW);
+  digitalWrite(ATOMIZZATORE, LOW);
+  digitalWrite(RELE_POMPA, HIGH);
+  digitalWrite(FOTORESISTENZA_ENABLE, LOW);
+  digitalWrite(PIASTRA, LOW);
 
   Serial.begin(9600);
 
@@ -142,12 +155,6 @@ void setup() {
   set_PID_parameters( );
   setup_scheduler( );
   timeClient.begin( );
-
-  digitalWrite(LED_STRIP, LOW);
-  digitalWrite(ATOMIZZATORE, LOW);
-  digitalWrite(RELE_POMPA, HIGH);
-  digitalWrite(FOTORESISTENZA_ENABLE, LOW);
-  digitalWrite(PIASTRA, LOW);
 
   pinMode(RELE_POMPA, OUTPUT);
   pinMode(ATOMIZZATORE, OUTPUT);
@@ -185,7 +192,7 @@ void spegni_pompa( ) {
 void pwm_res( ) {
 
   PID_piastra.Compute( );
-  analogWrite(PIASTRA, temperatura_setpoint);
+  analogWrite(PIASTRA, temperatura_out);
 
 }
 
@@ -199,7 +206,7 @@ void pwm_atom( ) {
 void pwm_led( ) {
 
   digitalWrite(FOTORESISTENZA_ENABLE, HIGH);
-  luce_in = analogRead(FOTORESISTENZA);
+  luce_in = (float) analogRead(FOTORESISTENZA);
   PID_led.Compute( );
   analogWrite(LED_STRIP, luce_out);
   digitalWrite(FOTORESISTENZA_ENABLE, LOW);
@@ -245,5 +252,13 @@ void update_tempo( ) {
 
   minuti = (minuti + 1) % 60;
   if (!minuti) ore = (ore + 1) % 24;
+
+  Serial.printf("Orario aggiornato: %d:%d:%d\n\n", ore, minuti, secondi);
+
+}
+
+void print( ) {
+
+  Serial.printf("Temp: %.1f\tHum: %.1f\tLight: %.1f\n", temperatura_out, umid_aria_out, luce_out);
 
 }
