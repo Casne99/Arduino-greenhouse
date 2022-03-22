@@ -243,9 +243,10 @@ void modalita_luce( ) {
 
   if ((ore > 20 || ore < 7) && !controllo_led.isEnabled( ))
     controllo_led.enable( );
-  else if ((ore > 6 && ore < 21) && controllo_led.isEnabled( ))
+  else if ((ore > 6 && ore < 21) && controllo_led.isEnabled( )) {
     controllo_led.disable( );
-
+    analogWrite(LED_STRIP, 0);
+  }
 }
 
 void update_tempo( ) {
