@@ -5,6 +5,8 @@ This is a project that uses an ESP8266 board to directly control various paramet
 
 Software is written using the [Arduino IDE](https://www.arduino.cc/en/software).
 
+Video: https://www.youtube.com/watch?v=FPowm9ezmYk
+
 ## Components 🔌
 Here is a list of all the components I used:
 
