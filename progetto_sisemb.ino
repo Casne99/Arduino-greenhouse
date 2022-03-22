@@ -241,7 +241,7 @@ void sync( ) {
 
 void modalita_luce( ) {
 
-  if (/*(ore > 20 || ore < 7)*/(ore > 12) && !controllo_led.isEnabled( ))
+  if ((ore > 20 || ore < 7) && !controllo_led.isEnabled( ))
     controllo_led.enable( );
   else if ((ore > 6 && ore < 21) && controllo_led.isEnabled( ))
     controllo_led.disable( );
