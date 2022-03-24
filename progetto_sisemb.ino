@@ -41,7 +41,7 @@ void sync( );
 const char *ssid     = /*your ssid*/
 const char *password = /*your password*/
 
-const long utcOffsetInSeconds = 3600;
+const long utcOffsetInSeconds = 3600; // sfasamento italiano rispetto a GMT in secondi
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
@@ -54,7 +54,7 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 long timer_pompa = 0;
 Scheduler scheduler;
 
-float kp_led = 0.1, ki_led = 0, kd_led = 0;                 //
+float kp_led = 0.1, ki_led = 0, kd_led = 0;                   //
 float kp_piastra = 3.5, ki_piastra = 0.5, kd_piastra = 1.3;   // COSTANTI PID
 float kp_neb = 1, ki_neb = 0.1, kd_neb = 0.5;                 //
 
