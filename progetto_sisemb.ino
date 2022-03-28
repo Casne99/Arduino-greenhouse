@@ -38,12 +38,12 @@ void sync( );
 
 /*   Globali   */
 
-const char *ssid     = /*your ssid*/
-const char *password = /*your password*/
+const char *ssid     = /*"TIM-19087353"*/"FRITZ!Powerline 540E";
+const char *password = /*"63669099Mc"*/"07111846058893390371";
 
-const long utcOffsetInSeconds = 3600; // sfasamento italiano rispetto a GMT in secondi
+const long utcOffsetInSeconds = 3600;
 
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+//char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 int ore = 0, minuti = 0, secondi = 0;
 
@@ -54,7 +54,7 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 long timer_pompa = 0;
 Scheduler scheduler;
 
-float kp_led = 0.1, ki_led = 0, kd_led = 0;                   //
+float kp_led = 0.1, ki_led = 0, kd_led = 0;                 //
 float kp_piastra = 3.5, ki_piastra = 0.5, kd_piastra = 1.3;   // COSTANTI PID
 float kp_neb = 1, ki_neb = 0.1, kd_neb = 0.5;                 //
 
@@ -115,6 +115,9 @@ void setup_scheduler( ) {
   /*scheduler.addTask(modalita_notte);
   modalita_notte.enable( );*/
 
+  scheduler.addTask(controllo_led);
+  controllo_led.enable( );
+
   scheduler.addTask(controllo_pompa);
   controllo_pompa.enable( ); 
 
@@ -126,9 +129,6 @@ void setup_scheduler( ) {
 
   scheduler.addTask(controllo_atom);
   controllo_atom.enable( );
-
-  scheduler.addTask(controllo_led);
-  controllo_led.enable( );
 
   scheduler.addTask(leggi_DHT);
   leggi_DHT.enable( );
