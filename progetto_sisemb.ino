@@ -38,8 +38,8 @@ void sync( );
 
 /*   Globali   */
 
-const char *ssid     = /*"TIM-19087353"*/"FRITZ!Powerline 540E";
-const char *password = /*"63669099Mc"*/"07111846058893390371";
+const char *ssid     = /*your ssid*/
+const char *password = /*your password*/
 
 const long utcOffsetInSeconds = 3600;
 
