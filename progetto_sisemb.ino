@@ -38,12 +38,10 @@ void sync( );
 
 /*   Globali   */
 
-const char *ssid     = /*your ssid*/
-const char *password = /*your password*/
+const char *ssid     = "your ssid";
+const char *password = "your password";
 
 const long utcOffsetInSeconds = 3600;
-
-//char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 int ore = 0, minuti = 0, secondi = 0;
 
@@ -71,7 +69,7 @@ QuickPID PID_neb(&umid_aria_in, &umid_aria_out, &umid_aria_setpoint);
 //Task modalita_notte(1 * TASK_MINUTE, TASK_FOREVER, modalita_luce);
 Task aggiorna_orario(1 * TASK_MINUTE, TASK_FOREVER, update_tempo);
 Task sincronizza_ora(6 * TASK_HOUR, TASK_FOREVER, sync);
-Task controllo_pompa(/*4 * TASK_HOUR*/ 50 * TASK_SECOND, TASK_FOREVER, accendi_pompa);
+Task controllo_pompa(4 * TASK_HOUR, TASK_FOREVER, accendi_pompa);
 Task controllo_res(0.2 * TASK_SECOND, TASK_FOREVER, pwm_res);
 Task stop_pompa(2 * TASK_SECOND, TASK_FOREVER, spegni_pompa);
 Task controllo_atom(0.02 * TASK_SECOND, TASK_FOREVER, pwm_atom);
@@ -143,24 +141,24 @@ void setup_scheduler( ) {
 
 void setup() {
 
+  pinMode(RELE_POMPA, OUTPUT);
+  pinMode(ATOMIZZATORE, OUTPUT);
+  pinMode(FOTORESISTENZA_ENABLE, OUTPUT);
+  pinMode(LED_STRIP, OUTPUT);
+  pinMode(FOTORESISTENZA, INPUT);
+
   digitalWrite(LED_STRIP, LOW);
   digitalWrite(ATOMIZZATORE, LOW);
   digitalWrite(RELE_POMPA, HIGH);
   digitalWrite(FOTORESISTENZA_ENABLE, LOW);
   digitalWrite(PIASTRA, LOW);
-
+  
   Serial.begin(9600);
 
   setup_Wifi( );
   set_PID_parameters( );
   setup_scheduler( );
   timeClient.begin( );
-
-  pinMode(RELE_POMPA, OUTPUT);
-  pinMode(ATOMIZZATORE, OUTPUT);
-  pinMode(FOTORESISTENZA_ENABLE, OUTPUT);
-  pinMode(LED_STRIP, OUTPUT);
-  pinMode(FOTORESISTENZA, INPUT);
 
 }
 
@@ -182,7 +180,7 @@ void accendi_pompa( ) {
 
 void spegni_pompa( ) {
 
-  if ((millis( ) - timer_pompa) >= TEMPO_EROGAZIONE) {
+  if ((millis( ) - timer_pompa) > TEMPO_EROGAZIONE) {
     Serial.println("SPEGNENDO POMPA");
     digitalWrite(RELE_POMPA, HIGH);
     stop_pompa.disable( );
